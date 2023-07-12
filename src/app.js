@@ -5,7 +5,7 @@ const { Server } = require("socket.io");
 
 //express
 const app = express();
-const port = 8080;
+const PORT = process.env.PORT || 8080;
 
 app.use("/static", express.static("./src/public"));
 
@@ -22,8 +22,8 @@ app.get("/health", (req, res) => {
   res.send("OK");
 });
 
-const httpServer = app.listen(port, (req, res) => {
-  console.log(`Server running at port: ${port}`);
+const httpServer = app.listen(PORT, (req, res) => {
+  console.log(`Server running at port: ${PORT}`);
 });
 
 //socket.io
