@@ -1,7 +1,7 @@
 const express = require("express");
-const handlebars = require("express-handlebars")
-const router = require("./router/views.router.js")
-const {Server} = require("socket.io")
+const handlebars = require("express-handlebars");
+const router = require("./router/views.router.js");
+const { Server } = require("socket.io");
 
 //express
 const app = express();
@@ -9,20 +9,32 @@ const port = 8080;
 
 app.use("/static", express.static("./src/public"));
 
-app.use(express.json())
-app.use(express.urlencoded({extended: true}))
-app.use("/", router)
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use("/", router);
 
 //handlebars
-app.engine("handlebars", handlebars.engine())
-app.set("views", "./src/views")
-app.set("view engine", "handlebars")
+app.engine("handlebars", handlebars.engine());
+app.set("views", "./src/views");
+app.set("view engine", "handlebars");
 
 app.get("/health", (req, res) => {
-    res.send("OK")
-})
+  res.send("OK");
+});
 
-//socket.io
 const httpServer = app.listen(port, (req, res) => {
   console.log(`Server running at port: ${port}`);
+});
+
+//socket.io
+const io = new Server(httpServer);
+
+const messages = [];
+io.on("connection", (socket) => {
+  socket.on("new", (user) => console.log(`${user} joined`));
+
+  socket.on("message", (data) => {
+    messages.push(data);
+    io.emit("logs", messages);
+  });
 });
